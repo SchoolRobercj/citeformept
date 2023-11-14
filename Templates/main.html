@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>CiteForMePT</h1>
+<h3>My Projects</h3>
+<h3>This Project</h3>
+{% for i in sources%}
+<li>{{i}}</li>
+{% endfor %}
+<form method="POST" action="/gptsource">
+    <label for="url">URL:</label>
+        <input type="text" name="url" id="url" value = 'example.com/examplesite' required>
+        <br>
+    <input type="submit" value="Add Source">
+</form>
+</body>
+</html>

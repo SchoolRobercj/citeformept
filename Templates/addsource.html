@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<h1>Multi Text Input Form</h1>
+    <form method="POST" action = "/submitsource" >
+        <label for="author">Author:</label>
+        <input type="text" name="author" id="author" value = "{{author}}" required>
+        <br>
+
+        <label for="year">Year:</label>
+        <input type="text" name="year" id="year" value="{{year}}" required>
+        <br>
+
+        <label for="month">Month:</label>
+        <input type="text" name="month" id="month" value="{{month}}" required>
+        <br>
+
+        <label for="day">Day:</label>
+        <input type="text" name="day" id="day" value="{{day}}" required>
+        <br>
+
+        <label for="publisher">Publisher:</label>
+        <input type="text" name="publisher" id="publisher" value="{{publisher}}" required>
+        <br>
+
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" value="{{title}}" required>
+        <br>
+
+        <label for="url">URL:</label>
+        <input type="text" name="url" id="url" value="{{url}}" required>
+        <br>
+
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
