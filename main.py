@@ -1,13 +1,36 @@
 from flask import Flask, render_template, redirect, request
+from flask_session import Session
 from bs4 import BeautifulSoup
 import requests
 from openai import OpenAI
-client = OpenAI()
-#OPENAI_API_KEY='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'
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, Column, Integer, String, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'itsosecret123'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///citeformept.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+Session(app)
+db = SQLAlchemy(app)
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), nullable=False)
+    password = db.Column(db.String(64), nullable=False)
+    projectdata = db.Column(db.PickleType)
+#engine = create_engine('sqlite:///citeformept.db', echo=True)
+
+with app.app_context():
+    # Create the database tables
+    db.create_all()
+client = OpenAI()
 
 
 
+def addUser(username,password):
+    new_user = User(username=username, password=password ,projectdata=[{'name': 'MyProject', 'sources': []}])
+    db.session.add(new_user)
+    db.session.commit()
 def extract_text_from_webpage(url):
     try:
         # Set a custom User-Agent header to mimic a web browser
@@ -43,8 +66,15 @@ mysources = []
 mysource = {'Author': 'John Smith', 'Year': '2019', 'Month': '05', 'Day': '17', 'Title': 'History of Blah blah blah', "Publisher": "ArticleSpot", "URL": "www.articlespot.com/12345678"}
 mysources.append(mysource)
 print (sourceDatatoText(mysource))
+
 @app.route('/')
 def load_main():
+    addUser('john', '1922')
+    users = User.query.all()  # Retrieve all users from the database
+    user_info = []
+    for user in users:
+        user_info.append(f"Username: {user.username}, Password: {user.password}, Project Data: {user.projectdata}")
+    print ('<br>'.join(user_info))
     global mysources
     myRefs = []
     for i in mysources:
@@ -109,4 +139,5 @@ def gptsource():
 
 
 if __name__ == '__main__':
+    #db.create_all()
     app.run(debug=True)
