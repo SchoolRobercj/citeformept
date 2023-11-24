@@ -26,7 +26,7 @@ with app.app_context():
 client = OpenAI()
 
 
-
+username = 'None'
 def addUser(username,password):
     new_user = User(username=username, password=password ,projectdata=[{'name': 'MyProject', 'sources': []}])
     db.session.add(new_user)
@@ -69,17 +69,17 @@ print (sourceDatatoText(mysource))
 
 @app.route('/')
 def load_main():
-    addUser('john', '1922')
-    users = User.query.all()  # Retrieve all users from the database
-    user_info = []
-    for user in users:
-        user_info.append(f"Username: {user.username}, Password: {user.password}, Project Data: {user.projectdata}")
-    print ('<br>'.join(user_info))
     global mysources
     myRefs = []
     for i in mysources:
         myRefs.append(sourceDatatoText(i))
-    return render_template('main.html', sources = myRefs)
+    global username
+    print (username)
+    if username == 'Null':
+        accountMessage = 'Not Signed In'
+    else:
+        accountMessage = 'Signed in As: '+ username
+    return render_template('main.html', sources = myRefs, account = accountMessage)
 
 @app.route('/newsource', methods = ['GET','POST'])
 def newsource():
@@ -136,6 +136,22 @@ def gptsource():
     return redirect('/newsource')
 
 
+@app.route('/loadSignUp', methods=['GET', 'POST'])
+def loadSignUp():
+    return render_template('signup.html')
+
+
+@app.route('/signUp', methods = ['GET','POST'])
+def signUp():
+    addUser(request.form.get('username'), request.form.get('password'))
+    global username
+    username = request.form.get('username')
+    users = User.query.all()  # Retrieve all users from the database
+    user_info = []
+    for user in users:
+        user_info.append(f"Username: {user.username}, Password: {user.password}, Project Data: {user.projectdata}")
+    print('<br>'.join(user_info))
+    return redirect('/')
 
 
 if __name__ == '__main__':
